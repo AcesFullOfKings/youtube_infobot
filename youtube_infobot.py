@@ -13,6 +13,7 @@ app_ID = info.app_ID
 app_secret = info.app_secret
 app_URI = info.app_URI
 app_refresh_token = info.app_refresh_token
+
 youtube_id_regex = re.compile(
                        "(http(s)?:\/\/)?(www|m).youtube.com\/.*v=([a-zA-Z0-9_-]*)")
                        # group 3 is ID (fourth group, zero-based)
@@ -32,12 +33,13 @@ Likes| {likes}
 Dislikes| {dislikes}
 Likes Ratio| {like_ratio}
 
-[^Source](https://goo.gl/gWVuP7) ^- [^Feedback](https://goo.gl/BAIZP1)
+[^Source]({source}) ^- [^Feedback]({feedback})
 
 """
 
 yt_dict = []
 done_items = []
+noshortsubs = info.noshortsubs
 
 with open("banlist.p",'rb') as f:
     banlist = pickle.load(f)
@@ -116,18 +118,22 @@ def youtube_info():
                         if not more_than_a_min:
                             duration += " seconds"
 
-                        if dislikes == 0:
+                        if int(dislikes) == 0:
                             ratio = 1
-                        elif likes == 0:
+                        elif int(likes) == 0:
                             ratio = 0
                         else:
-                            try:
-                                ratio = str(round((int(likes)/(int(likes)+int(dislikes)))*100,1)) + "%"
-                            except ZeroDivisionError as e:
-                                ratio = 0
-                                print ("Fail. Divided by zero. Now the world is going to end. Great.")
+                            ratio = str(round((int(likes)/(int(likes)+int(dislikes)))*100,1)) + "%"
 
-                        reply = reply_template.format(title = title, channel = channel, likes = likes, dislikes = dislikes, views = views, length = duration, like_ratio = ratio )
+                        if c.subreddit.display_name.lower() in noshortsubs:
+                            source = info.long_source
+                            feedback = info.long_feedback
+                        else:
+                            source = info.short_source
+                            feedback = info.short_feedback
+
+                        views = "{:,}".format(int(views))
+                        reply = reply_template.format(title=title, channel=channel, likes=likes, dislikes=dislikes, views=views, length=duration, like_ratio=ratio, feedback=feedback, source=source)
                         c.reply(reply)
                         print("Replied to comment " + c.id)
 
@@ -162,7 +168,7 @@ while True:
         time.sleep(60)
     except praw.errors.RateLimitExceeded as e:
         print("Rate limit exceeded! - " + str(e))
-        waittime = int(e.message[42])
+        waittime = int(e.message[42:44])
         if e.message[44:].startswith("minutes"):
             unit = "minutes"
         else:
@@ -178,6 +184,3 @@ while True:
     except Exception as e:
         print("Unknown Error - " + str(e))
         time.sleep(60)
-
-
-time.sleep(10000)
