@@ -7,7 +7,7 @@ import youtube_infobot_info as info
 import praw
 
 gBrowserKey  = info.gBrowserKey
-app_user_agent = ("")
+app_user_agent = info.app_user_agent
 app_ID = info.app_ID
 app_secret = info.app_secret
 app_URI = info.app_URI
@@ -166,27 +166,28 @@ while True:
         all = all.get_comments(limit=100)
         all = list(all)
 
-        youtube_info()
         get_messages()
+        youtube_info()
         
-        time.sleep(5)
+        time.sleep(2)
     except praw.errors.HTTPException as e:
         print("Http Error - " +  str(e))
         time.sleep(60)
     except praw.errors.RateLimitExceeded as e:
-        print("Rate limit exceeded! - " + str(e))
-        waittime = int(e.message[42:44])
-        if e.message[44:].startswith("minutes"):
-            unit = "minutes"
-        else:
-            unit = "seconds"
+        #print("Rate limit exceeded! - " + str(e))
+        #waittime = int(e.message[42:44])
+        #if e.message[44:].startswith("minutes"):
+        #    unit = "minutes"
+        #else:
+        #    unit = "seconds"
         
-        if unit == "minutes":
-            waittime += 1
-            waittime *= 60
+        #if unit == "minutes":
+        #    waittime += 1
+        #    waittime *= 60
 
-        print("Waiting " + str(waittime))
-        time.sleep(int(waittime))
+        #print("Waiting " + str(waittime))
+        #time.sleep(int(waittime))
+        time.sleep(20)
 
     except Exception as e:
         print("Error - " + str(e))
