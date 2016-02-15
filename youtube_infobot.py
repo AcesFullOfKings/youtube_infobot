@@ -139,7 +139,9 @@ def youtube_info():
                             feedback = info.short_feedback
 
                         views = "{:,}".format(int(views))
-                        reply = reply_template.format(title=title, channel=channel, likes=likes, dislikes=dislikes, views=views, length=duration, like_ratio=ratio, feedback=feedback, source=source)
+                        reply = reply_template.format(title=title, channel=channel, likes=likes, 
+                                                      dislikes=dislikes, views=views, length=duration, 
+                                                      like_ratio=ratio, feedback=feedback, source=source)
                         c.reply(reply)
                         print("Replied to comment " + c.id)
 
