@@ -7,8 +7,7 @@ import youtube_infobot_info as info
 import praw
 
 gBrowserKey  = info.gBrowserKey
-app_user_agent = ("Finds youtube links and provides additional information. "
-                  "Written, hosted, and operated by /u/theonefoster")
+app_user_agent = ("")
 app_ID = info.app_ID
 app_secret = info.app_secret
 app_URI = info.app_URI
