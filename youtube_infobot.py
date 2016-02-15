@@ -2,15 +2,17 @@ import time
 import requests
 import re
 import pickle
+import youtube_infobot_info as info
 
 import praw
 
-gBrowserKey  = ""
-app_user_agent = ("")
-app_ID = ""
-app_secret = ""
-app_URI = ""
-app_refresh_token = ""
+gBrowserKey  = info.gBrowserKey
+app_user_agent = ("Finds youtube links and provides additional information. "
+                  "Written, hosted, and operated by /u/theonefoster")
+app_ID = info.app_ID
+app_secret = info.app_secret
+app_URI = info.app_URI
+app_refresh_token = info.app_refresh_token
 youtube_id_regex = re.compile(
                        "(http(s)?:\/\/)?(www|m).youtube.com\/.*v=([a-zA-Z0-9_-]*)")
                        # group 3 is ID (fourth group, zero-based)
@@ -176,3 +178,6 @@ while True:
     except Exception as e:
         print("Unknown Error - " + str(e))
         time.sleep(60)
+
+
+time.sleep(10000)
