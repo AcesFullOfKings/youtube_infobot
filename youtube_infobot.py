@@ -3,6 +3,7 @@ import requests
 import re
 import pickle
 import youtube_infobot_info as info
+import traceback
 
 import praw
 
@@ -191,4 +192,8 @@ while True:
 
     except Exception as e:
         print("Error - " + str(e))
+        print ("-" * 25)
+        print("Here's the traceback:")
+        traceback.print_exc()
+        print ("-" * 25)
         time.sleep(30)
