@@ -22,7 +22,7 @@ youtube_id_regex_alt = re.compile(
                        # group 3 is still the ID
 time_regex = re.compile(
                        "PT(([0-9]{1,2})H)?(([0-9]{1,2})M)?(([0-9]{1,2})S)") 
-                        #group 1 is H, 3 is M, 5 is S
+                        #group 1 is Hrs, 3 is Mins, 5 is Secs
 
 banned_regex = re.compile("you've been banned from /r/.*")
 
@@ -57,12 +57,13 @@ def login():
     return r
 
 def getYoutubeVideoData(part, input_type, input_val): 
-    # part=where to search, input = search value, val=return value
-    # read like "from LOCATION, get the PART where INPUT_TYPE is INPUT_VAL 
-    # and return RETURN_VAL
-    # where location is channel/video, part is statistics/snippet/status,
-    # type is ID or fromUsername, val is the search value, return value is 
-    # the data you want
+    """
+     part = where to search, input = search value, val=return value
+     read like "get the PART where INPUT_TYPE is INPUT_VAL 
+     where location part is statistics/snippet/status,
+     type is ID or fromUsername
+     val is the search value, return value is the data you want
+    """
 
     try:
         global yt_dict
@@ -129,7 +130,11 @@ def youtube_info():
                         elif int(likes) == 0:
                             ratio = "0%"
                         else:
-                            ratio = str(round((int(likes)/(int(likes)+int(dislikes)))*100,1)) + "%"
+                            ratio = str(round(( int(likes)/
+                                               (int(likes)+int(dislikes))
+                                              )*100,1
+                                             )
+                                       ) + "%"
 
                         if c.subreddit.display_name.lower() in no_shortlink_subs:
                             source = info.long_source
@@ -139,9 +144,11 @@ def youtube_info():
                             feedback = info.short_feedback
 
                         views = "{:,}".format(int(views))
-                        reply = reply_template.format(title=title, channel=channel, likes=likes, 
-                                                      dislikes=dislikes, views=views, length=duration, 
-                                                      like_ratio=ratio, feedback=feedback, source=source)
+                        reply = reply_template.format(title=title, channel=channel,
+                                                      likes=likes, dislikes=dislikes,
+                                                      views=views, length=duration,
+                                                      like_ratio=ratio, feedback=feedback,
+                                                      source=source)
                         c.reply(reply)
                         print("Replied to comment " + c.id)
 
