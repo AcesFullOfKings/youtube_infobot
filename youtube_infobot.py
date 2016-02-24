@@ -2,10 +2,11 @@ import time
 import requests
 import re
 import pickle
-import youtube_infobot_info as info
 import traceback
 
 import praw
+
+import youtube_infobot_info as info
 
 gBrowserKey  = info.gBrowserKey
 app_user_agent = info.app_user_agent
@@ -146,10 +147,10 @@ def youtube_info():
 
                         views = "{:,}".format(int(views))
                         reply = reply_template.format(title=title, channel=channel,
-                                                        likes=likes, dislikes=dislikes,
-                                                        views=views, length=duration,
-                                                        like_ratio=ratio, feedback=feedback,
-                                                        source=source)
+                                                      likes=likes, dislikes=dislikes,
+                                                      views=views, like_ratio=ratio,
+                                                      length=duration, feedback=feedback,
+                                                      source=source)
                         c.reply(reply)
                         print("Replied to comment " + c.id)
         except praw.errors.InvalidComment as e:
@@ -181,9 +182,7 @@ r = login()
 while True:
     try:
         r.handler.clear_cache()
-        all = r.get_subreddit("all")
-        all = all.get_comments(limit=100, fetch=True)
-        all = list(all)
+        all = list(r.get_subreddit("all").get_comments(limit=100, fetch=True))
 
         get_messages()
         youtube_info()
@@ -197,19 +196,6 @@ while True:
         print ("-" * 25)
         time.sleep(30)
     except praw.errors.RateLimitExceeded as e:
-        #print("Rate limit exceeded! - " + str(e))
-        #waittime = int(e.message[42:44])
-        #if e.message[44:].startswith("minutes"):
-        #    unit = "minutes"
-        #else:
-        #    unit = "seconds"
-        
-        #if unit == "minutes":
-        #    waittime += 1
-        #    waittime *= 60
-
-        #print("Waiting " + str(waittime))
-        #time.sleep(int(waittime))
         print("Rate limit exceeded. Error: " + str(e))
         time.sleep(20)
 
