@@ -76,6 +76,7 @@ def getYoutubeVideoData(part, input_type, input_val):
 
 def youtube_info():
     for c in all:
+        try:
             if c.id not in done_items and c.subreddit.display_name not in banlist:
                 done_items.append(c.id)
                 match = re.findall(youtube_id_regex, c.body)
@@ -131,10 +132,10 @@ def youtube_info():
                             ratio = "0%"
                         else:
                             ratio = str(round(( int(likes)/
-                                               (int(likes)+int(dislikes))
-                                              )*100,1
-                                             )
-                                       ) + "%"
+                                                (int(likes)+int(dislikes))
+                                                )*100,1
+                                                )
+                                        ) + "%"
 
                         if c.subreddit.display_name.lower() in no_shortlink_subs:
                             source = info.long_source
@@ -145,12 +146,22 @@ def youtube_info():
 
                         views = "{:,}".format(int(views))
                         reply = reply_template.format(title=title, channel=channel,
-                                                      likes=likes, dislikes=dislikes,
-                                                      views=views, length=duration,
-                                                      like_ratio=ratio, feedback=feedback,
-                                                      source=source)
+                                                        likes=likes, dislikes=dislikes,
+                                                        views=views, length=duration,
+                                                        like_ratio=ratio, feedback=feedback,
+                                                        source=source)
                         c.reply(reply)
                         print("Replied to comment " + c.id)
+        except praw.errors.InvalidComment as e:
+            print("Invalid Comment - " + str(e))
+        except KeyError:
+            print("Key error.")
+            traceback.print_exc()
+            print ("-" * 20 + "\n\n")
+        except Exception as e:
+            print("Unknown error - " + str(e))
+            traceback.print_exc()
+            print ("-" * 20 + "\n\n")
 
 def get_messages():
     unread = r.get_unread()
@@ -171,7 +182,7 @@ while True:
     try:
         r.handler.clear_cache()
         all = r.get_subreddit("all")
-        all = all.get_comments(limit=100)
+        all = all.get_comments(limit=100, fetch=True)
         all = list(all)
 
         get_messages()
@@ -180,7 +191,11 @@ while True:
         time.sleep(2)
     except praw.errors.HTTPException as e:
         print("Http Error - " +  str(e))
-        time.sleep(60)
+        print ("-" * 25)
+        print("Here's the traceback:")
+        traceback.print_exc()
+        print ("-" * 25)
+        time.sleep(30)
     except praw.errors.RateLimitExceeded as e:
         #print("Rate limit exceeded! - " + str(e))
         #waittime = int(e.message[42:44])
@@ -195,6 +210,7 @@ while True:
 
         #print("Waiting " + str(waittime))
         #time.sleep(int(waittime))
+        print("Rate limit exceeded. Error: " + str(e))
         time.sleep(20)
 
     except Exception as e:
